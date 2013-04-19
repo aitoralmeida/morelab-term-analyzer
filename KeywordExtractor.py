@@ -7,9 +7,18 @@ Created on Thu Apr 18 12:29:52 2013
 
 import re
 import urllib2
-import os
-import pyPdf
+#import pyPdf
 from topia.termextract import extract
+
+import os
+from os import listdir
+from os.path import isfile, join
+
+import codecs
+from cStringIO import StringIO
+from pdfminer.converter import TextConverter
+from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+from pdfminer.layout import LAParams
 
 def getPdfs():
     url = 'http://www.morelab.deusto.es/'
@@ -37,24 +46,49 @@ def getPdfs():
                 code.write(data)
     
 
+#def get_pdf_content(path):
+#    content = ""
+#    p = open(path, "rb")
+#    pdf = pyPdf.PdfFileReader(p)
+#    num_pages = pdf.getNumPages()
+#    for i in range(0, num_pages):
+#        content += pdf.getPage(i).extractText() + u"\n"
+#    # content = " ".join(content.replace(u"\xa0", " ").strip().split())
+#    new_content = u""
+#    for c in content:
+#        if '\\u' not in repr(c):
+#            new_content += c
+#    return new_content
+
 def get_pdf_content(path):
-    content = ""
-    p = file(path, "rb")
-    pdf = pyPdf.PdfFileReader(p)
-    num_pages = pdf.getNumPages()
-    for i in range(0, num_pages):
-        content += pdf.getPage(i).extractText() + "\n"
-    content = " ".join(content.replace(u"\xa0", " ").strip().split())    
-    return content.encode('UTF-8')
+    laparams = LAParams()
+    rsrc = PDFResourceManager()
+    outfp = StringIO()
+    device = TextConverter(rsrc, outfp, codec="cp1252", laparams=laparams)
+    process_pdf(rsrc, device, codecs.open(path))
+    return outfp.getvalue()
 
 def get_terms_topia(text):
     extractor = extract.TermExtractor()
+    extractor.filter = extract.DefaultFilter(singleStrengthMinOccur=2)
     terms = sorted(extractor(text))
     return terms
-        
+    
+def process_pdfs():
+    years = range(2006, 2014)
+    relations = []
+    for y in years:   
+        file_path = './pdf/publications/' + str(y) + '/'
+        filenames = [ f for f in listdir(file_path) if isfile(join(file_path,f)) ]
+        for name in filenames:
+            content = get_pdf_content(file_path + name)
+            terms = get_terms_topia(content)
+            paper_terms = [t[0] for t in terms]
+            relations.append[paper_terms]
+    return relations      
 
 if __name__ == "__main__":
     content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
+    print content
     keywords = get_terms_topia(content)
     print keywords
-    
