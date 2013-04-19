@@ -83,7 +83,7 @@ def process_pdfs():
         for name in filenames:
             content = get_pdf_content(file_path + name)
             terms = get_terms_topia(content)
-            paper_terms = [t[0] for t in terms]
+            paper_terms = [t[0] for t in terms if t[1] > 1]
             relations.append[paper_terms]
     return relations      
 
