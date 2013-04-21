@@ -83,12 +83,15 @@ def process_pdfs():
         for name in filenames:
             content = get_pdf_content(file_path + name)
             terms = get_terms_topia(content)
-            paper_terms = [t[0] for t in terms if t[1] > 1]
-            relations.append[paper_terms]
+            paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
+            print paper_terms
+            relations.append(paper_terms)
     return relations      
 
 if __name__ == "__main__":
-    content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
-    print content
-    keywords = get_terms_topia(content)
-    print keywords
+#    content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
+#    print content
+#    keywords = get_terms_topia(content)
+#    print keywords
+    rels = process_pdfs()
+    print rels
