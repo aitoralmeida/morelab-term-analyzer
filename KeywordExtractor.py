@@ -64,6 +64,7 @@ def get_pdf_content(path):
     laparams = LAParams()
     rsrc = PDFResourceManager()
     outfp = StringIO()
+    #TODO: detect the encoding of the PDF
     device = TextConverter(rsrc, outfp, codec="cp1252", laparams=laparams)
     process_pdf(rsrc, device, codecs.open(path))
     return outfp.getvalue()
@@ -83,6 +84,8 @@ def process_pdfs():
         for name in filenames:
             content = get_pdf_content(file_path + name)
             terms = get_terms_topia(content)
+            #still having problems with the encodings of the pdf file, the second
+            #part of the conditons is hopefully a temporal "workaround"
             paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
             print paper_terms
             relations.append(paper_terms)
