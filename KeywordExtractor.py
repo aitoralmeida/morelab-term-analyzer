@@ -163,7 +163,15 @@ def is_bad(term):
                        '\xedstica', '\xf1adir', '\xf1o', '\xf3dulo', '\xf3n', '\xf3vile',
                        '\xfan', 'K authS ,A', 'K encS ,A', '_time', '3 DU Blocks', 
                        '3 DU Blocks Music', '3 DU Blocks library', '3 DU Blocks',
-                       '3 DU Blocks Music', '3 DU Blocks library']
+                       '3 DU Blocks Music', '3 DU Blocks library', 'pp', 'bol',
+                       'compartici', 'digitale', 'educacio', 'patr', 'virtuale',
+                       'electr', 'pr', '/IP', 'ices', 'f', 'satisfacci', 'metodolog',
+                       'nominale', 'precisi', 'presi', 'sintagm', 'Se', 'SN', 'Smorph',
+                       'aqu', 'autom', 'cc', 'enumeraci', 'enumeracione', 'espa', 'extracci']
+    
+    non_significant = ['copy', 'cada', 'muestra', 'gracia', 'funcionamiento', 'pueden'
+                       'punto', 'externa', 'tener', 'tecla', 'Ejemplo', 'example',
+                       'Tabla',]
     
     if len(re.findall('^,[A-Za-z]*',term)) > 0:
         bad  = True   
@@ -184,6 +192,8 @@ def is_bad(term):
     elif len(re.findall('^[^A-Za-z]*$',term)) > 0:
         bad = True
     elif term in invalid_terms:
+        bad = True
+    elif term in non_significant:
         bad = True
 #    elif len(re.findall('^[A-Za-z -]*$',term)) == 0:
 #        print "Sospechoso:", term, repr(term)
