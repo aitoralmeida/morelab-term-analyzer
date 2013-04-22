@@ -22,8 +22,6 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfparser import PDFSyntaxError
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-import csv
-
 verbose = True
 
 def getPdfs():
@@ -215,5 +213,5 @@ if __name__ == "__main__":
 #    print keywords
     rels = process_pdfs()
     export_csv_undirected(rels)
-    import pprint
+#    import pprint
 #    pprint.pprint(SUSPICIOUS)
