@@ -51,21 +51,6 @@ def getPdfs():
             with open("./pdf/" + path + filename, "wb") as code:
                 code.write(data)
     
-
-#def get_pdf_content(path):
-#    content = ""
-#    p = open(path, "rb")
-#    pdf = pyPdf.PdfFileReader(p)
-#    num_pages = pdf.getNumPages()
-#    for i in range(0, num_pages):
-#        content += pdf.getPage(i).extractText() + u"\n"
-#    # content = " ".join(content.replace(u"\xa0", " ").strip().split())
-#    new_content = u""
-#    for c in content:
-#        if '\\u' not in repr(c):
-#            new_content += c
-#    return new_content
-
 def get_pdf_content(path):
     laparams = LAParams()
     rsrc = PDFResourceManager()
@@ -94,10 +79,11 @@ def process_pdfs():
             if verbose:
                 print "Procesing" + file_path + name
             content = get_pdf_content(file_path + name)
-            terms = get_terms_topia(content)
-            #still having problems with the encodings of the pdf file, the second
-            #part of the conditons is hopefully a temporal "workaround"
-            paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
+            terms = get_terms_topia(content)           
+            #paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
+            #still having problems with the encodings of the pdf file, the repr
+            #is hopefully a temporal "workaround
+            paper_terms = [t[0] for t in terms if t[1] > 2 and not is_bad(t[0]) and not '\\' in repr(t[0])]
             if verbose:
                 print "  ->  Total terms: " + str(len(paper_terms))
             relations.append(paper_terms)
@@ -105,18 +91,44 @@ def process_pdfs():
     if verbose:
         print "\n\n" + str(len(relations)) + " papers analized"
     return relations  
-    
+
+#curating the terms extracted with topia to delete some incorrect ones
+def is_bad(term):
+    invalid_terms = ['\\x', '.,', '(cid', '/', '/ i n', '/ f', '</', '><!--',
+                       '),', '--></', '.:', '].', '[<', '[</', '</', '|k', '=0.6).',
+                       'http ://www', '/ / www', '://drupal', '://www', '="http',
+                       '="x', '(?', '),', '->', '2),', '(?', '),', '.,',
+                       'T', 'P', 'V', 'U', 'l', 'J', 'F', 'L', 'D', 'W', 'S',
+                       'b', 'm', 'w', 't', 'W m', 'n', 'r', 'r e', 'g', 'k',
+                       '1.', '2.', '3.', '4.', '5.' '6.', '7.', '8.', '2.0-', '[4].',
+                       '[1]', '[2]', '[3]', '[4]', '[5]', '[6]', '[7]', '[8]',
+                       '[9]', '[10]', '[11]', '[12]', '[13]', '[14]', '[15]', 
+                       '[16]', '[17]', '[18]', '[19]', '[24]', '[40]', 
+                       'Fig', 'Figure', 'figure', 'e.g.', 'i.e.',                   
+                       '-2006', '(2006).', '2011)',
+                       'ontolo', 're', 'gy', 'http ://www http ://www DRAFT', 'et',
+                       'al', '/her',
+                       'Ordu', 'Garc']
+                       
+    if verbose:
+        if term in invalid_terms:
+            print "Invalid term: " + term
+    return term in invalid_terms
+   
 def export_csv_undirected(relations):
     if verbose:
         print "\nExporting CSV"
-    with open('./data/termRelations.csv', 'wb') as csvfile:
-        writer = csv.writer(csvfile, delimiter=';')
+    total_rels = 0
+    with open('./data/termRelations.csv', 'wb') as file:
+        #writer = csv.writer(csvfile, delimiter=';')
         for terms in relations:
             for term in terms:
                 ind = terms.index(term)
                 for i in range (ind+1, len(terms)):
-                    row = [term, terms[i]]
-                    writer.writerow(row)
+                    file.write(term + ';' + terms[i] + '\n')
+                    total_rels+=1
+    if verbose:
+        print "File exported, total relations: " + str(total_rels)
                     
 if __name__ == "__main__":
 #    content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
