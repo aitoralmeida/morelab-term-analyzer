@@ -24,7 +24,9 @@ from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
 verbose = True
 
-def getPdfs():
+def get_pdfs(include_spanish = False):
+    spanish = ['pcuriel_CISTI12', 'ablago2011entorno', 'CAIS2011-07', 'pretel2010framework',
+               'jornadasrfid2008_v1.0', 'WebLabTAEE2006']
     url = 'http://www.morelab.deusto.es/'
     path_base = 'publications/'
     years = range(2006, 2014)
@@ -40,6 +42,8 @@ def getPdfs():
             print response
             print "\n************FILES**********\n"
         for filename in re.findall('"\S+.pdf"', response):
+            if not include_spanish and filename in spanish:
+                continue
             filename = filename.replace('"', '')
             if verbose:
                 print "Filename: " + filename
@@ -217,6 +221,10 @@ def export_csv_undirected(relations):
         print "File exported, total relations: " + str(total_rels)
                     
 if __name__ == "__main__":
+    # Run once this line to get the pdfs
+    get_pdfs()
+#   
+    
 #    content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
 #    print content
 #    keywords = get_terms_topia(content)
