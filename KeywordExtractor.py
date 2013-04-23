@@ -85,7 +85,7 @@ def process_pdfs():
             #paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
             #still having problems with the encodings of the pdf file, the repr
             #is hopefully a temporal "workaround
-            paper_terms = [t[0].strip() for t in terms if t[1] > 4 and not is_bad(t[0].strip()) and not '\\' in repr(t[0])]
+            paper_terms = [t[0].strip().lower() for t in terms if t[1] > 4 and not is_bad(t[0].strip()) and not '\\' in repr(t[0])]
             if verbose:
                 print "  ->  Total terms: " + str(len(paper_terms))
             relations.append(paper_terms)
@@ -171,11 +171,34 @@ def is_bad(term):
                        'compartici', 'digitale', 'educacio', 'patr', 'virtuale',
                        'electr', 'pr', '/IP', 'ices', 'f', 'satisfacci', 'metodolog',
                        'nominale', 'precisi', 'presi', 'sintagm', 'Se', 'SN', 'Smorph',
-                       'aqu', 'autom', 'cc', 'enumeraci', 'enumeracione', 'espa', 'extracci']
+                       'aqu', 'autom', 'cc', 'enumeraci', 'enumeracione', 'espa', 'extracci',
+                       'ject', 'nod', 'Ubiquitou', 'ing', 'dene', 'ob', 'Ipi', 'San',
+                       'Ed', 'dened', 'specic', 'Comput', 'ment', 'Twit-er', 'nally',
+                       'opez', 'topologie', 'denition', 'i', 'jects', 'Capabilitie',
+                       'n', 'ed', 't', 'e', 'Intl', 'Ob', 'folksonomie', 'Commun',
+                       'Wirel', 'environ', 'oC', 'tation0', 'aj', 'p', 'b', 'c',
+                       'codication', 'l', 'el', 'cl', 'cr', 'insuciencia', 'jur', '/IP',
+                       'x', 'J', 'di', 'TalismanPlu', '++', 'ion', 'ice', 'part', 
+                       'consumer', 'log', 'men', 'ide', 'cca', 'con', 'figu', 'int', 
+                       'th', 'ab', 'acco', 'agen', 'algo', 'app', 'arch', 'cen', 'compu', 
+                       'concep', 'cus', 'dep', 'dev', 'ices', 'eb', 'eman', 'eng', 
+                       'env', 'ironmen', 'ference', 'fo', 'iat', 'ibut', 'ic', 'ical', 
+                       'icat', 'ider', 'ie', 'ierarchy', 'ifferen', 'ime', 'ine', 
+                       'ing', 'ines', 'ional', 'itectu', 'ity', 'iv', 'ld', 'lem', 
+                       '', 'llow', 'locat', 'ies', '', 'logy', 'lt', 'ly', '', 'mo', 
+                       'mp', 'netwo', 'ou', 'peer-to', 'rd', 'rder', 'rea', 'rep', 
+                       'rithm', 'rk', 'rmat', 'roach', 'roce', 'roces', 'ropo', 'rov', 
+                       'te', 'ted', 'tem', 'tere', 'the', 'tho', 'tribu', 'ty', 'umer', 
+                       'ure', 'xt', 'ystem']
     
     non_significant = ['copy', 'cada', 'muestra', 'gracia', 'funcionamiento', 'pueden'
                        'punto', 'externa', 'tener', 'tecla', 'Ejemplo', 'example',
-                       'Tabla',]
+                       'Tabla', 'Tim', 'Diego', 'Ignacio', 'Juan', 'Vazquez', 'John',
+                       'other', 'Such', 'one', 'May', 'April', 'Matute', 'Reip', 'Vadillo',
+                       'Joshi', 'Chen', 'Finin', 'Harry', 'MARCH', 'Roy', 'Zhang', 
+                       'Davis', 'Springer', 'Avda', 'Iker', 'Larizgoitia',
+                       'December', 'Platero', 'derecho', 'frecuencia', 'la', 'Lassila',
+                       'Ivan', 'Aitor', 'Pretel', 'Almeida', 'Goiri']
     
     if len(re.findall('^,[A-Za-z]*',term)) > 0:
         bad  = True   
@@ -221,8 +244,8 @@ def export_csv_undirected(relations):
         print "File exported, total relations: " + str(total_rels)
                     
 if __name__ == "__main__":
-    # Run once this line to get the pdfs
-    get_pdfs()
+    #Run once this line to get the pdfs
+    #get_pdfs()
 #   
     
 #    content = get_pdf_content('./pdf/publications/2006/WebLabEWME2006.pdf')
