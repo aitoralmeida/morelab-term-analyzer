@@ -7,7 +7,7 @@ Created on Thu Apr 18 12:29:52 2013
 
 import re
 import urllib2
-#import pyPdf
+import csv
 from topia.termextract import extract
 
 import os
@@ -85,7 +85,10 @@ def process_pdfs():
             #paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
             #still having problems with the encodings of the pdf file, the repr
             #is hopefully a temporal "workaround
+
             paper_terms = [t[0].strip().lower() for t in terms if t[1] > 4 and not is_bad(t[0].strip()) and not '\\' in repr(t[0])]
+
+                        
             if verbose:
                 print "  ->  Total terms: " + str(len(paper_terms))
             relations.append(paper_terms)
@@ -189,7 +192,7 @@ def is_bad(term):
                        'mp', 'netwo', 'ou', 'peer-to', 'rd', 'rder', 'rea', 'rep', 
                        'rithm', 'rk', 'rmat', 'roach', 'roce', 'roces', 'ropo', 'rov', 
                        'te', 'ted', 'tem', 'tere', 'the', 'tho', 'tribu', 'ty', 'umer', 
-                       'ure', 'xt', 'ystem']
+                       'ure', 'xt', 'ystem', 'mwes']
     
     non_significant = ['copy', 'cada', 'muestra', 'gracia', 'funcionamiento', 'pueden'
                        'punto', 'externa', 'tener', 'tecla', 'Ejemplo', 'example',
@@ -223,7 +226,7 @@ def is_bad(term):
     elif term in non_significant:
         bad = True
 #    elif len(re.findall('^[A-Za-z -]*$',term)) == 0:
-#        print "Sospechoso:", term, repr(term)
+#        print "Suspicious:", term, repr(term)
 #        SUSPICIOUS.append(term)
  
     return bad
@@ -232,13 +235,14 @@ def export_csv_undirected(relations):
     if verbose:
         print "\nExporting CSV"
     total_rels = 0
-    with open('./data/termRelations.csv', 'wb') as file:
-        #writer = csv.writer(csvfile, delimiter=';')
+    with open('./data/termRelations.csv', 'wb') as output_file:
+        writer = csv.writer(output_file, delimiter=';')
         for terms in relations:
             for term in terms:
                 ind = terms.index(term)
                 for i in range (ind+1, len(terms)):
-                    file.write(term + ';' + terms[i] + '\n')
+                    row = [term, terms[i]]
+                    writer.writerow(row) 
                     total_rels+=1
     if verbose:
         print "File exported, total relations: " + str(total_rels)
