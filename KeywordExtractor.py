@@ -85,9 +85,12 @@ def process_pdfs():
             #paper_terms = [t[0] for t in terms if t[1] > 2 and not '\\x' in repr(t[0])]
             #still having problems with the encodings of the pdf file, the repr
             #is hopefully a temporal "workaround
-
-            paper_terms = [t[0].strip().lower() for t in terms if t[1] > 4 and not is_bad(t[0].strip()) and not '\\' in repr(t[0])]
-
+            #paper_terms = [t[0].strip().lower() for t in terms if t[1] > 4 and not is_bad(t[0].strip()) and not '\\' in repr(t[0])]
+            paper_terms = []
+            for t in terms:
+                if not is_bad(t[0].strip()) and not '\\' in repr(t[0]):
+                    if t[1] > 4 or (t[1] > 1 and t[2] > 1):
+                        paper_terms.append(t)
                         
             if verbose:
                 print "  ->  Total terms: " + str(len(paper_terms))
