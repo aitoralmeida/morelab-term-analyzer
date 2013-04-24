@@ -90,7 +90,8 @@ def process_pdfs():
             for t in terms:
                 if not is_bad(t[0].strip()) and not '\\' in repr(t[0]):
                     if t[1] > 4 or (t[1] > 1 and t[2] > 1):
-                        paper_terms.append(t)
+                        # Gephi has problems with node ids with spaces
+                        paper_terms.append(t[0].strip().lower().replace(' ', '_'))
                         
             if verbose:
                 print "  ->  Total terms: " + str(len(paper_terms))
